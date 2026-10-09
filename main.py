@@ -22,7 +22,7 @@ def converter_afnd_epsilon(estados, alfabeto, transicoes, finais):
     
     # Avalia cada estado (p1) do autômato
     for p1 in estados:
-        # Descobre todos os estados (p2) que p1 alcança no escorregão do epsilon
+        # Descobre todos os estados (p2) que p1 alcança ao seguir epsilon
         estados_p2 = alcancaveis_por_epsilon(p1)
         
         for p2 in estados_p2:
@@ -34,7 +34,7 @@ def converter_afnd_epsilon(estados, alfabeto, transicoes, finais):
                         if letra not in novas_transicoes[p1]:
                             novas_transicoes[p1][letra] = set()
                         novas_transicoes[p1][letra].add(q)
-                        print(f"Regra 1: Seta '{letra}' copiada de {p2} para {p1}. Novo caminho: {p1} --{letra}--> {q}")
+                        print(f"Regra 1: Seta '{letra}' copiada de {p2} para {p1}. Novo caminho: {p1} ---{letra}--> {q}")
 
             # Se p2 é um estado final, p1 também vira estado final.
             if p2 in finais:
@@ -50,34 +50,41 @@ def converter_afnd_epsilon(estados, alfabeto, transicoes, finais):
     return novas_transicoes, novos_finais
 
 
-# Teste final (funciona com qualquer um, faz na mão o automato e verifica se ta certo)
-
 if __name__ == "__main__":
     
     # Conjuntos formais do Autômato
-    estados  = {'1', '2', '3', '4'}
+    estados  = {'1', '2', '3', '4', '5'}
     alfabeto = {'a', 'b'}
     finais   = {'4'}
     
     # Tabela de Transições do AFND
     # Estrutura: 'estado_origem': {'letra': {'estados_destino'}}
     transicoes = {
-        
+
+         #Questão 3 da prova do dia 10/10/2023
+
         '1': {
-            'a': {'2'}           # Lê 'a' e avança para o estado 2
+            'a': {'2'},               # Lê 'a' e avança para o estado 2
+            'b': {'5', '1'}           # Lê 'b' e avança para o estado 5 e 1
         },
         
         '2': {
-            'b': {'3'}           # Lê 'b' e desce para o estado 3
+            'a': {'2'},                # Lê 'a' e faz um loop nele mesmo
+            'epsilon': {'3', '4'}      # Transição vazia: escorrega para o estado 3 e 4
         },
         
         '3': {
-            'a':       {'3'},    # Lê 'a' e faz um loop nele mesmo
-            'epsilon': {'4'}     # Transição vazia: escorrega para o estado 4
+            'a': {'4'},                # Lê 'a' e avança para o estado 4
+            'b': {'3'}                 # Lê 'b' e faz um loop nele mesmo
         },
         
         '4': {
-            'b': {'1'}           # Lê 'b' e sobe de volta para o estado inicial 1
+            'a': {'5'},                # Lê 'a' e avança para o estado 5
+            'b': {'2'}                 # Lê 'b' e avança para o estado 4
+        },
+        '5': {
+            'a': {'5'},                # Lê 'a' e faz um loop nele mesmo
+            'b': {'1'}                 # Lê 'b' e avança para o estado 1
         }
     }
 
